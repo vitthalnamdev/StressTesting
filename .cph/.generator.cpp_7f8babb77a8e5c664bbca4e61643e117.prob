@@ -1,0 +1,1 @@
+{"name":"Local: generator","url":"c:\\Users\\Vitthal Namdev\\Documents\\icpc\\testcases\\generator.cpp","tests":[{"id":1723651884160,"input":"3\n5 3\n1 15 5 7 2\n4 2\n4 7 9 12\n6 6\n1 2 3 4 5 6","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\Vitthal Namdev\\Documents\\icpc\\testcases\\generator.cpp","group":"local","local":true}

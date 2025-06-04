@@ -1,0 +1,1 @@
+{"name":"Local: correct","url":"c:\\Users\\Vitthal Namdev\\Documents\\cp\\testcases\\correct.cpp","tests":[{"id":1722181087989,"input":"1\n9\n3 9 8 7 5 10 2 1 9","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\Vitthal Namdev\\Documents\\cp\\testcases\\correct.cpp","group":"local","local":true}
