@@ -1,60 +1,98 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
+using ll = long long;
 
-ll recursion(int i, int j, int n, int m, int mask, vector<vector<ll>> &arr, vector<vector<vector<ll>>> &dp) {
-    if (i >= n) return 0;
-    if (j >= m) return recursion(i + 1, 0, n, m, mask, arr, dp);
-    if (dp[i][j][mask] != -1) return dp[i][j][mask];
+//------------------------DEBUG START-------------------------------------
+#define debug(x) cerr << #x << " ", _print(x),cerr << endl;
+void _print(int a) { cerr << a; }
+void _print(char a) { cerr << a; }
+void _print(long long int a) { cerr << a; }
+void _print(string a) { cerr << a; }
+void _print(bool a) { cerr << a; }
+template <class T1, class T2>void _print(pair<T1, T2> a) {cerr << "{ "; cerr << a.first << " " << a.second; cerr << " }";}
+template <class T>void _print(vector<T> &a) {cerr << "[ "; for (T i : a) {_print(i); cerr << " ";} cerr << " ]";}
+template <class T>void _print(set<T> &a) {cerr << "[ "; for (T i : a) {_print(i); cerr << " ";} cerr << " ]";}
+template <class T>void _print(multiset<T> &a) {cerr << "[ "; for (T i : a) {_print(i); cerr << " ";} cerr << " ]";}
+//------------------------DEBUG END-------------------------------------
 
-    int bit = i * n + j;
-    if (mask & (1 << bit)) {
-        return dp[i][j][mask] = recursion(i, j + 1, n, m, mask, arr, dp);
+void dfs1(int node , int parent , vector<int>adj[] , vector<int>&vis) {
+    int n = (int)vis.size();
+    if (node == (n - 1)) {
+        vis[node] = 1;
+        return;
     }
-
-    ll ans = arr[i][j] ^ recursion(i, j + 1, n, m, mask, arr, dp);
-
-    // Horizontal domino
-    if (j + 1 < m) {
-        int bit1 = i * n + j;
-        int bit2 = i * n + j + 1;
-        if (!(mask & (1 << bit2))) {
-            int new_mask = mask | (1 << bit1) | (1 << bit2);
-            ans = max(ans, recursion(i, j + 2, n, m, new_mask, arr, dp));
-        }
+    for (auto i : adj[node]) {
+        if (i == parent) {continue;}
+        dfs1(i , node , adj , vis);
+        vis[node] |= vis[i];
     }
-
-    // Vertical domino
-    if (i + 1 < n) {
-        int bit1 = i * n + j;
-        int bit2 = (i + 1) * n + j;
-        if (!(mask & (1 << bit2))) {
-            int new_mask = mask | (1 << bit1) | (1 << bit2);
-            ans = max(ans, recursion(i, j + 1, n, m, new_mask, arr, dp));
-        }
-    }
-
-    return dp[i][j][mask] = ans;
 }
 
-void solve() {
-    int n, m;
-    cin >> n >> m;
-    vector<vector<ll>> arr(n, vector<ll>(m));
-    int total = (1 << (n * m));
-    
-    vector<vector<vector<ll>>> dp(n, vector<vector<ll>>(m, vector<ll>(total, -1)));
+void marknvisited(vector<int>adj[] , vector<int>&vis) {
+    dfs1(1 , -1 , adj , vis);
+}
+vector<vector<int>>result;
+bool dfs2(int node , int parent , vector<int>adj[] , vector<int>&vis , int n) {
 
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < m; j++)
-            cin >> arr[i][j];
+    if (node == n) {
+        return true;
+    }
 
-    cout << recursion(0, 0, n, m, 0, arr, dp) << endl;
+    if (vis[node] && (parent != -1)) {
+        result.push_back({2 , parent});
+    }
+
+    int nNode = -1;
+    for (auto i : adj[node]) {
+        if (i == parent) {continue;}
+        if (vis[i]) {
+            nNode = i; continue;
+        }
+        result.push_back({1});
+        bool curr = dfs2(i , node , adj , vis , n);
+        if (curr) {return curr;}
+
+    }
+
+    if (nNode != -1) {
+        result.push_back({1});
+        bool curr = dfs2(nNode , node , adj , vis , n);
+        if (curr) {
+            return true;
+        }
+    }
+
+    result.push_back({1});
+    result.push_back({2 , node});
+    return false;
+}
+
+inline void solve() {
+    result.clear();
+    int n; cin >> n;
+    vector<int>adj[n + 1];
+    for (int i = 1; i < n; i++) {
+        int u , v; cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    vector<int>visn(n + 1 , 0);
+    marknvisited(adj , visn);
+    dfs2(1, -1 , adj , visn , n);
+    cout << (int)result.size() << endl;
+    for (auto i : result) {
+        for (auto j : i) {cout << j << " ";}
+        cout << endl;
+    }
+    cout << endl;
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.tie(nullptr);
-    solve();
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    std::cout.tie(nullptr);
+    int t;
+    if (!(cin >> t)) return 0;
+    while (t--) solve();
+    return 0;
 }
